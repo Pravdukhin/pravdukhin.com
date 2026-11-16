@@ -322,6 +322,131 @@ dialog::backdrop{background:rgba(0,0,0,.6)}
 }
 </style>
 
+
+<style>
+/* v8.1: stages in two groups: Development (0–3) in a frame, Delivery apart */
+.phs{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,1fr);column-gap:20px;grid-template-areas:"hd hi" "sd si"}
+.phs .fr{grid-area:1/1/3/2;border:1px solid var(--line);border-radius:12px;pointer-events:none}
+.phs .phh{padding:20px 20px 22px}
+.phs .phh .k{display:block;color:var(--ink);font-size:22px;font-weight:400;letter-spacing:-.005em;margin-bottom:8px}
+.phs .phh p{margin:0;color:var(--dim);font-size:15px;line-height:1.5;max-width:76ch}
+.phs .hd{grid-area:hd}
+.phs .hi{grid-area:hi;padding-left:0;padding-right:0}
+.phs .steps.sd{grid-area:sd;grid-template-columns:repeat(4,1fr);padding:0 20px 22px}
+.phs .steps.si{grid-area:si;grid-template-columns:1fr;padding:0 0 22px}
+.steps .x3{margin-top:10px}
+@media (max-width:900px){
+  .phs{grid-template-columns:1fr;grid-template-areas:"hd" "sd" "hi" "si"}
+  .phs .steps.sd{grid-template-columns:repeat(2,1fr)}
+  .phs .hi{padding-top:36px}
+}
+@media (max-width:560px){
+  .phs .phh{padding:18px 16px 20px}
+  .phs .hi{padding:34px 0 18px}
+  .phs .steps.sd{grid-template-columns:1fr;padding:0 16px 20px}
+}
+/* v8.1: interactive presentations (round 2): devices from the reel, thumbnails, layout options pv1|pv2|pv3 */
+.spP{scroll-margin-top:56px}
+.spP .k{display:block;color:var(--amber);font-size:13px;font-weight:500;letter-spacing:.04em;margin-bottom:10px}
+.spP h2{font-weight:300;font-size:clamp(30px,4.4vw,52px);letter-spacing:-.02em;margin:0;line-height:1.08}
+.prh{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px clamp(24px,4vw,56px);align-items:end;margin-bottom:clamp(20px,3vw,36px)}
+.prh .lead{margin:0;max-width:46ch}
+.stg{position:relative;max-width:1000px;margin:0 auto}
+.stg .dev{position:relative;aspect-ratio:1280/746}
+.stg .dev::before{content:"";position:absolute;inset:-1px;z-index:1;pointer-events:none;box-shadow:inset 0 0 30px 22px var(--night)}
+.stg .dv{display:block;width:100%;height:100%;object-fit:cover}
+.stg .lap{display:none;position:absolute;left:9%;right:9%;top:6%;bottom:12%;border:10px solid #18202d;border-bottom-width:12px;border-radius:14px;background:#000;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.45)}
+.stg .lap::after{content:"";position:absolute}
+.stg .lap video{display:block;width:100%;height:100%;object-fit:cover}
+.stg.laptop .dev::before{display:none}
+.stg.laptop .dv{display:none}
+.stg.laptop .lap{display:block}
+.stg.laptop .dev::after{content:"";position:absolute;left:4%;right:4%;bottom:7%;height:14px;border-radius:0 0 14px 14px;background:linear-gradient(#2a3446,#141b27)}
+.stg .ph{position:absolute;right:1.5%;bottom:-4%;width:clamp(96px,17%,190px);aspect-ratio:9/16;border-radius:20px;border:6px solid #141b27;background:#000;overflow:hidden;box-shadow:0 24px 50px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.06)}
+.stg .ph video{display:block;width:100%;height:100%;object-fit:cover}
+.stg.nophone .ph,.noph .stg .ph{display:none}
+/* ph2 / ph3: the phone beside the laptop, both clean, nothing overlaps */
+.ph2 .stg,.ph3 .stg{display:flex;align-items:center;gap:clamp(14px,2.6vw,36px);max-width:1120px}
+.ph2 .stg .dev,.ph3 .stg .dev{flex:1 1 auto;min-width:0}
+.ph2 .stg .ph,.ph3 .stg .ph{position:relative;right:auto;bottom:auto;flex:0 0 auto;box-shadow:0 20px 44px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.06)}
+.ph2 .stg .ph{width:clamp(84px,19%,200px);border-radius:22px}
+.ph3 .stg .ph{width:clamp(96px,23%,250px);aspect-ratio:360/504;border-width:5px;border-radius:16px}
+.ph2 .stg.nophone,.ph3 .stg.nophone{display:block;max-width:1000px}
+@media (max-width:760px){ .ph2 .stg .ph{width:24%;border-radius:12px;border-width:3px} .ph3 .stg .ph{width:28%;border-radius:10px;border-width:3px} }
+.prs{display:flex;justify-content:space-between;align-items:flex-end;gap:20px 32px;flex-wrap:wrap;margin-top:clamp(22px,3vw,34px)}
+.prt{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;padding:2px}
+.prt button{appearance:none;font:inherit;background:none;border:0;padding:0;cursor:pointer;color:var(--dim);text-align:left;width:150px;flex:0 0 auto}
+.prt img{display:block;width:150px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;opacity:.55;outline:1px solid var(--line);outline-offset:0;transition:opacity .2s,outline-color .2s}
+.prt span{display:block;font-size:12px;line-height:1.35;margin-top:7px;transition:color .2s}
+.prt button:hover img{opacity:.85}
+.prt button[aria-selected="true"] img{opacity:1;outline:1px solid var(--amber);outline-offset:3px}
+.prt button[aria-selected="true"] span{color:var(--ink)}
+.prs .go{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.prs .pnote{margin:0;padding:0;border:0;color:var(--dim);font-size:13px}
+.spP .btn::after{content:" →"}
+/* pv2: no text, the screens speak */
+.pv2 .prh .lead{display:none}
+.pv2 .prh{grid-template-columns:1fr}
+/* pv3: devices left, text right (mirror of Scanning) */
+@media (min-width:901px){
+  .pv3 .spP{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);grid-template-areas:"stg prh" "stg prs";column-gap:clamp(28px,4vw,56px);align-items:start}
+  .pv3 .prh{grid-area:prh;grid-template-columns:1fr;align-self:end;margin:0 0 22px}
+  .pv3 .stg{grid-area:stg;margin:0;align-self:center}
+  .pv3 .prs{grid-area:prs;flex-direction:column;align-items:flex-start;margin:0}
+  .pv3 .prs .go{align-items:flex-start}
+  .pv3 .prt button,.pv3 .prt img{width:132px}
+}
+@media (max-width:760px){
+  .prh{grid-template-columns:1fr}
+  .stg .ph{width:24%;right:0;bottom:-8%;border-radius:16px;border-width:4px}
+  .prs{flex-direction:column;align-items:stretch;margin-top:30px}
+  .prs .go{align-items:flex-start}
+  .prt{margin:0 calc(-1 * var(--pad));padding:2px var(--pad)}
+  .prt button,.prt img{width:138px}
+}
+/* Delivery options: rva two frames, rvb brackets, rvc filled + framed */
+.rva .phs .fr2{display:block}
+.phs .fr2{display:none;grid-area:1/2/3/3;border:1px solid var(--line);border-radius:12px;pointer-events:none}
+.rva .phs .hi{padding-left:20px;padding-right:20px}
+.rva .phs .steps.si{padding:0 20px 22px}
+.rvb .phs .fr{display:none}
+.rvb .phs .phh{padding-left:0;padding-right:0}
+.rvb .phs .phh::before{content:"";display:block;height:9px;border:1px solid rgba(242,166,72,.6);border-bottom:0;border-radius:3px 3px 0 0;margin-bottom:16px}
+.rvb .phs .steps.sd{padding-left:0;padding-right:0}
+.rvc .phs .fr{background:rgba(255,255,255,.025);border-color:transparent}
+.rvc .phs .fr2{display:block}
+.rvc .phs .hi{padding-left:20px;padding-right:20px}
+.rvc .phs .steps.si{padding:0 20px 22px}
+@media (max-width:900px){ .rva .phs .fr2,.rvc .phs .fr2{grid-area:3/1/5/2} .rva .phs .hi,.rvc .phs .hi{margin-top:24px;padding-top:20px} .rvb .phs .hi{padding-top:30px} }
+</style>
+
+<style>
+/* v8.1 round 6: device frames for the clean screen recordings */
+#presentation .stg{display:block;position:relative;max-width:980px;margin:0 auto;padding-bottom:2%}
+.mac{position:relative;width:100%}
+.mac .scr{position:relative;background:#0a1220;border:clamp(5px,1vw,11px) solid #1b2029;border-bottom-width:clamp(7px,1.4vw,15px);border-radius:clamp(9px,1.6vw,18px) clamp(9px,1.6vw,18px) 4px 4px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.08),0 34px 70px rgba(0,0,0,.5)}
+.mac .wbar{display:flex;align-items:center;gap:clamp(3px,.5vw,6px);height:clamp(13px,2.3vw,27px);padding:0 clamp(6px,1vw,12px);background:#141a24;border-bottom:1px solid rgba(255,255,255,.05)}
+.mac .wbar i{flex:0 0 auto;width:clamp(4px,.75vw,9px);aspect-ratio:1;border-radius:50%;background:#ff5f57}
+.mac .wbar i:nth-child(2){background:#febc2e}
+.mac .wbar i:nth-child(3){background:#28c840}
+.mac .wbar span{margin:0 auto;transform:translateX(-12%);padding:.25em 2.4em;border-radius:5px;background:#0c111a;color:var(--dim);font-size:clamp(6px,.85vw,11px);letter-spacing:.01em;white-space:nowrap}
+.mac video{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;background:#0a1220}
+.mac .base{position:relative;height:clamp(7px,1.3vw,15px);margin:0 -6.5%;background:linear-gradient(#323a48,#171c25 70%);border-radius:2px 2px 50% 50% / 2px 2px 100% 100%}
+.mac .base::after{content:"";position:absolute;left:50%;top:0;width:13%;height:42%;transform:translateX(-50%);background:#20262f;border-radius:0 0 6px 6px}
+#presentation .stg .ph{position:absolute;right:-1%;bottom:-3%;width:clamp(90px,21%,210px);aspect-ratio:1180/2556;border:clamp(3px,.55vw,6px) solid #262b33;border-radius:15.5% / 7.2%;background:#000;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.12),0 26px 56px rgba(0,0,0,.6)}
+#presentation .stg .ph video{display:block;width:100%;height:100%;object-fit:cover}
+.ph .di{position:absolute;top:1.25%;left:50%;width:32%;height:4.2%;transform:translateX(-50%);background:#000;border-radius:999px}
+/* computer: the phone stands beside the laptop */
+@media (min-width:761px){
+  #presentation .stg{display:flex;align-items:flex-end;gap:clamp(18px,3vw,40px);max-width:1120px}
+  #presentation .stg .mac{flex:1 1 auto;min-width:0}
+  #presentation .stg .ph{position:relative;right:auto;bottom:auto;flex:0 0 auto;width:clamp(120px,20%,220px);margin-bottom:1%}
+}
+@media (max-width:760px){ .mac .base{margin:0 -3%} #presentation .stg{margin-right:4%} #presentation .stg .ph{width:27%;right:-5%;bottom:-6%;border-width:3px} }
+.noph #presentation .stg .ph{display:none}
+.noph #presentation .stg{display:block;max-width:980px}
+</style>
+
 <style>
 /* portfolio: the first projects, the rest open in place */
 .grid.cut > .card:nth-child(n+7){display:none}
@@ -540,7 +665,7 @@ dialog::backdrop{background:rgba(0,0,0,.6)}
       <dl class="facts">
         <div><dt>20+</dt><dd data-i="f1">years in event production</dd></div>
         <div><dt>500+</dt><dd data-i="f2">projects</dd></div>
-        <div><dt>18</dt><dd data-i="f3">countries</dd></div>
+        <div><dt>19</dt><dd data-i="f3">countries</dd></div>
       </dl>
       <p class="cl" id="countries"></p>
     </div>
@@ -573,13 +698,20 @@ dialog::backdrop{background:rgba(0,0,0,.6)}
   <h2 data-i="hH">How we work</h2>
   <p class="lead" data-i="hP">First the project is designed, then it is built. The client sees what they pay for, and the budget is agreed faster.</p>
   <p class="lead lead2"><span data-i="hP2a"></span><b class="fee" data-i="hP2b"></b><span data-i="hP2c"></span></p>
-  <ol class="steps">
+  <div class="phs">
+  <div class="fr" aria-hidden="true"></div><div class="fr2" aria-hidden="true"></div>
+  <div class="phh hd"><span class="k" data-i="dvK">Development</span><p data-i="dvP"></p></div>
+  <div class="phh hi"><span class="k" data-i="imK">Delivery</span></div>
+  <ol class="steps sd">
     <li id="brief" class="first"><span class="d" data-i="bK">60 days to show · First call</span><h3 data-i="bH">A preliminary budget in two working days</h3><p><span data-i="bP"></span><b class="hl" data-i="bPb"></b><span data-i="bPc"></span></p><div class="bot"><div class="pr"><b data-i="p0">Free</b></div><a class="btn wa" href="https://wa.me/393498929736" target="_blank" rel="noopener" data-i="briefBtn">Request a brief</a></div></li>
     <li><span class="d" data-capn="0">45 days to show</span><h3 data-i="s1h">A digital copy of the venue</h3><p data-i="s1p"></p><div class="bot"><div class="pr"><b data-i="p1"></b><span data-i="p1s"></span></div><a class="btn scb" href="3d-venue-scanning/" data-i="scanBtn">About scanning</a></div></li>
     <li><span class="d" data-capn="1">30 days to show</span><h3 data-i="s2h">Technical design, true to size</h3><p data-i="s2p"></p><div class="bot"><div class="pr"><b data-i="p2"></b><span data-i="p2s"></span></div></div></li>
-    <li><span class="d" data-capn="2">20 days to show</span><h3 data-i="s3h">Visuals for the client</h3><p data-i="s3p"></p><div class="bot"><div class="pr"><b data-i="p2v"></b><span data-i="p2vs"></span></div></div></li>
+    <li><span class="d" data-capn="2">20 days to show</span><h3 data-i="s3h">Visuals for the client</h3><p data-i="s3p"></p><p class="x3" data-i="s3x"></p><div class="bot"><div class="pr"><b data-i="p2v"></b><span data-i="p2vs"></span></div><a class="btn scb" href="#presentation" data-i="s3b">About the interactive presentation</a></div></li>
+  </ol>
+  <ol class="steps si">
     <li><span class="d" data-capn="3">Show day</span><h3 data-i="s4h">Delivered as designed</h3><p data-i="s4p"></p><div class="bot"><div class="pr"><b data-i="p3"></b><span data-i="p3s"></span></div></div></li>
   </ol>
+  </div>
   <p class="prtime" data-i="bS"></p>
   <p class="prnote" data-i="pN"></p>
 </section>
@@ -609,6 +741,20 @@ dialog::backdrop{background:rgba(0,0,0,.6)}
   </div></div></div>
 </section>
 
+<section class="s spP" id="presentation">
+  <div class="prh">
+    <div><span class="k" data-i="prK"></span><h2 data-i="prH"></h2></div>
+    <p class="lead" data-i="prP"></p>
+  </div>
+  <div class="stg">
+    <div class="mac"><div class="scr"><div class="wbar"><i></i><i></i><i></i><span>demo.pravdukhin.com</span></div><video class="dv" muted loop playsinline preload="none"></video></div><div class="base"></div></div>
+    <div class="ph"><video muted loop playsinline preload="none"></video><i class="di"></i></div>
+  </div>
+  <div class="prs">
+    <div class="prt" role="tablist"></div>
+    <div class="go"><a class="btn" id="prGo" href="https://demo.pravdukhin.com/" data-i="prGo"></a><p class="pnote" data-i="prNote"></p></div>
+  </div>
+</section>
 <section class="s contact" id="contact">
   <h2 data-i="nContact">Contact</h2>
   <ul class="chan">
@@ -645,7 +791,7 @@ const T = {
   h0: 'Technical design and production for events worldwide',
   loading: 'Loading 60 days of work before show day', loaded: 'Loaded: 60 days of work before show day',
   hint: 'Scroll back in time — this is how we’ll build yours',
-  cta: 'Discuss your project', scanBtn: 'About scanning', spK: 'Digital copy of the venue', spH: '3D venue scanning', spP: 'A point cloud in one site visit: an exact digital copy of the venue with every wall and step. Italy, France, UAE and worldwide.', spF1: 'accuracy inside the cloud', spF2h: '1 hour', spF2: 'for a whole hotel in Georgia', spF3h: '1 backpack', spF3: 'the scanner flies with me to any country', spGo: 'About scanning', spMore: 'Show more', spLess: 'Show less', spHc: 'A hotel in Georgia, scanned in one hour', spV1: 'Gardens, terraces and courtyards', spV2: 'Halls, stairs, corridors and complex spaces in one pass', spV3: 'The cloud grows live on screen: nothing is missed', spCm: 'cm', bAlt: 'or write directly ↓',
+  cta: 'Discuss your project', scanBtn: 'About scanning', spK: 'Digital copy of the venue', spH: '3D venue scanning', spP: 'A point cloud in one site visit: an exact digital copy of the venue with every wall and step. Italy, France, UAE and worldwide.', spF1: 'accuracy inside the cloud', spF2h: '1 hour', spF2: 'for a whole hotel in Georgia', spF3h: '1 backpack', spF3: 'the scanner flies with me to any country', spGo: 'About scanning', spMore: 'Show more', spLess: 'Show less', spHc: 'A hotel in Georgia, scanned in one hour', dvK: 'Development', dvP: 'Engineering 3D design of the event. The result: a true-to-size build project, visuals for the client and a working technical budget for delivery.', imK: 'Delivery', s3x: 'Optionally, the 3D model and renders can be turned into an interactive presentation with a seating plan. It opens from a link on a phone: walk through the venue and move the guests around.', s3b: 'See an example', prK: 'Visuals for the client', prH: 'Interactive project presentation with seating', prP: 'The future event in one link: a walk from the entrance to the stage, lighting and decor, an interactive seating plan and the view from any seat.', prGo: 'Open the presentation', prNote: 'Guests and names are fictional. The venue has been altered.', spV1: 'Gardens, terraces and courtyards', spV2: 'Halls, stairs, corridors and complex spaces in one pass', spV3: 'The cloud grows live on screen: nothing is missed', spCm: 'cm', bAlt: 'or write directly ↓',
   bK: '60 days to show · First call', sD: ['45 days to show', '30 days to show', '20 days to show', 'Show day'], bH: 'A preliminary budget in two working days',
   bP: 'To begin, answer 8 questions about your event. Within two working days I will prepare ', bPb: 'an indicative technical budget across all departments: sound, lighting, video, screens, staging and structures', bPc: '. I will also propose the next steps. If the figures work for you, we move on to the project.',
   bS: 'The whole path from the first call to show day usually takes 30 to 60 days. If you have less time, get in touch and we’ll see what can be done.',
@@ -657,9 +803,9 @@ const T = {
   s3h: 'Visuals for the client', s3p: 'Renders are built from the same model our suppliers work from. The client sees not a sketch, but what will actually be built.',
   s4h: 'Delivered as designed', s4p: 'Delivery follows the approved design to the letter. At this stage I prepare a detailed technical brief and work schedule for the suppliers, which are also agreed with the venue and other services. This keeps surprises on site to a minimum and the risks under control.',
   aH: 'About', a1: 'Hi! I’m Yuriy, and I’ve been in technical event production for over 20 years, in recent years more and more often around the world. That usually means 60 flights a year, and yes, I love planes too.', a2: 'I also love bringing structure to chaos and building a system in everything I take on.', a3: 'As a technical director, I specialise in conferences and high-end private events. As my portfolio shows, galas and stadium projects come my way too.', a4: 'In summer I live near Milan, in winter I’m often in Dubai. I work on projects in SketchUp and Vectorworks, and we use visualisation tools built on Unreal Engine. For each project I bring together a trusted team of specialists, and I’m personally accountable for the result.', a5: 'I work in English and Russian.', f1: 'years in event production', f2: 'projects', f3: 'countries',
-  gH: 'Where', gP: 'Based in Milan and Dubai. Delivered projects in 18 countries.', geoH: 'Experience and trusted technical partners in:',
+  gH: 'Where', gP: 'Based in Milan and Dubai. Delivered projects in 19 countries.', geoH: 'Experience and trusted technical partners in:',
   mail: 'Email', close: 'Close', foot1: 'Yuriy Pravdukhin · Technical design and production for events', foot2: 'Milan, Italy · Dubai, UAE',
-  countries: ['Italy','France','Spain','Greece','Cyprus','Montenegro','Croatia','Turkey','Georgia','Serbia','Bulgaria','UAE','Maldives','Kazakhstan','China','Singapore','Thailand','Malaysia'],
+  countries: ['Italy','France','Spain','Greece','Cyprus','Malta','Montenegro','Croatia','Turkey','Georgia','Serbia','Bulgaria','UAE','Maldives','Kazakhstan','China','Singapore','Thailand','Malaysia'],
   caps: [
    ['Day −45', 'A digital copy of the venue', 'We inspect the venue and walk it with a handheld SLAM scanner. In a few hours we have a point cloud, an accurate 3D copy of the venue: every wall, tree and step. Our own equipment in Italy and the UAE.'],
    ['Day −30', 'Technical design, true to size', 'Stage, screens, lighting, sound, décor and seating in a single 3D model of the real venue. Designed on BIM principles: every supplier works in one shared environment, and clashes are resolved on screen, not on site.'],
@@ -676,7 +822,7 @@ const T = {
   h0: 'Технический дизайн и продакшн мероприятий по всему миру',
   loading: 'Загружаем 60 дней работы до дня мероприятия', loaded: 'Загружено: 60 дней работы до дня мероприятия',
   hint: 'Листайте назад во времени — так мы будем готовить и ваш проект',
-  cta: 'Обсудить проект', scanBtn: 'О сканировании', spK: 'Цифровая копия площадки', spH: '3D-сканирование площадок', spP: 'Облако точек за один выезд: точная цифровая копия площадки с каждой стеной и ступенькой. Италия, Франция, ОАЭ и весь мир.', spF1: 'точность внутри облака', spF2h: '1 час', spF2: 'на целый отель в Грузии', spF3h: '1 рюкзак', spF3: 'сканер летит со мной в любую страну', spGo: 'О сканировании', spMore: 'Подробнее', spLess: 'Свернуть', spHc: 'Отель в Грузии, отсканирован за час', spV1: 'Сады, террасы и дворы', spV2: 'Залы, лестницы, коридоры и помещения сложной формы за один проход', spV3: 'Облако растёт на экране: на месте видно, что ничего не пропущено', spCm: 'см', bAlt: 'или напишите напрямую ↓',
+  cta: 'Обсудить проект', scanBtn: 'О сканировании', spK: 'Цифровая копия площадки', spH: '3D-сканирование площадок', spP: 'Облако точек за один выезд: точная цифровая копия площадки с каждой стеной и ступенькой. Италия, Франция, ОАЭ и весь мир.', spF1: 'точность внутри облака', spF2h: '1 час', spF2: 'на целый отель в Грузии', spF3h: '1 рюкзак', spF3: 'сканер летит со мной в любую страну', spGo: 'О сканировании', spMore: 'Подробнее', spLess: 'Свернуть', spHc: 'Отель в Грузии, отсканирован за час', dvK: 'Разработка', dvP: 'Инженерная 3D-разработка мероприятия. Итог: проект застройки в точных размерах, визуализация для клиента и рабочий технический бюджет на реализацию.', imK: 'Реализация', s3x: 'Дополнительно на основе 3D-модели и рендеров можно собрать интерактивную презентацию с рассадкой гостей. Её возможно открыть по ссылке с телефона, прогуляться по площадке и пересадить гостей.', s3b: 'Пример презентации', prK: 'Визуализация для клиента', prH: 'Интерактивная презентация проекта с рассадкой', prP: 'Будущее мероприятие по одной ссылке: проход от входа до сцены, свет и декор, интерактивная рассадка гостей и вид с любого места.', prGo: 'Открыть презентацию', prNote: 'Гости и имена вымышлены. Площадка изменена.', spV1: 'Сады, террасы и дворы', spV2: 'Залы, лестницы, коридоры и помещения сложной формы за один проход', spV3: 'Облако растёт на экране: на месте видно, что ничего не пропущено', spCm: 'см', bAlt: 'или напишите напрямую ↓',
   bK: '60 дней до мероприятия · Первый звонок', sD: ['45 дней до мероприятия', '30 дней до мероприятия', '20 дней до мероприятия', 'День мероприятия'], bH: 'Предварительный бюджет за два рабочих дня',
   bP: 'Чтобы начать, ответьте на 8 вопросов о мероприятии. Через два рабочих дня я подготовлю ', bPb: 'ориентировочный технический бюджет по всем блокам: звук, свет, видео, экраны, сцена и конструкции', bPc: '. Также предложу план дальнейших действий. Если цифры вас устроят, переходим к работе над проектом.',
   bS: 'Весь путь от первого звонка до дня мероприятия обычно занимает от 30 до 60 дней. Если времени меньше, напишите, обсудим, что успеем.',
@@ -688,9 +834,9 @@ const T = {
   s3h: 'Визуализация для клиента', s3p: 'Рендеры строим по той же модели, по которой работают подрядчики. Клиент видит не эскиз, а то, что действительно будет построено.',
   s4h: 'Построено так, как спроектировано', s4p: 'Реализация идёт строго по утверждённому проекту. На этом этапе я готовлю для подрядчиков подробное техническое задание и график работ, они также согласовываются с площадкой и другими службами. Благодаря этому сюрпризов на монтаже минимум, а риски управляемы.',
   aH: 'Обо мне', a1: 'Привет! Меня зовут Юрий, и я занимаюсь техническим продакшном мероприятий больше 20 лет. В последние годы всё чаще по миру. Обычно это 60 перелётов в год, и да, самолёты я тоже очень люблю.', a2: 'Ещё я люблю структурировать хаос и выстраивать систему в любом деле, за которое берусь.', a3: 'Как технический директор я специализируюсь на конференциях и премиальных частных мероприятиях. Как видно по портфолио, гала-ужины и проекты на стадионах у меня тоже случаются.', a4: 'Летом живу недалеко от Милана, зимой часто в Дубае. Работаю с проектами в SketchUp и Vectorworks, визуализаторы используем на базе Unreal Engine. Под задачи проекта собираю проверенную команду специалистов, а за результат отвечаю лично.', a5: 'Работаю на русском и английском.', f1: 'лет в продакшне мероприятий', f2: 'проектов', f3: 'стран',
-  gH: 'География', gP: 'Базы в Милане и Дубае. Реализованные проекты в 18 странах.', geoH: 'Опыт работы и проверенные технические партнёры в странах:',
+  gH: 'География', gP: 'Базы в Милане и Дубае. Реализованные проекты в 19 странах.', geoH: 'Опыт работы и проверенные технические партнёры в странах:',
   mail: 'Почта', close: 'Закрыть', foot1: 'Юрий Правдухин · Технический дизайн и продакшн мероприятий', foot2: 'Милан, Италия · Дубай, ОАЭ',
-  countries: ['Италия','Франция','Испания','Греция','Кипр','Черногория','Хорватия','Турция','Грузия','Сербия','Болгария','ОАЭ','Мальдивы','Казахстан','Китай','Сингапур','Таиланд','Малайзия'],
+  countries: ['Италия','Франция','Испания','Греция','Кипр','Мальта','Черногория','Хорватия','Турция','Грузия','Сербия','Болгария','ОАЭ','Мальдивы','Казахстан','Китай','Сингапур','Таиланд','Малайзия'],
   caps: [
    ['День −45', 'Цифровая копия площадки', 'Выезжаем на инспекцию и обходим площадку с ручным SLAM-сканером. За несколько часов получаем облако точек, точную 3D-копию площадки: каждую стену, дерево и ступеньку. Собственное оборудование в Италии и ОАЭ.'],
    ['День −30', 'Технический проект в точных размерах', 'Вся застройка (сцена, экраны, свет, звук, декор и рассадка) собрана в единой 3D-модели реальной площадки. Проектируем по принципам BIM: все подрядчики работают в одной среде, а пересечения конструкций находятся и решаются на экране, а не на монтаже.'],
@@ -730,6 +876,7 @@ function applyLang() {
   if (typeof PROJECTS !== 'undefined') document.querySelectorAll('#wgrid .card').forEach(c => { const p = PROJECTS.find(x => x.slug === c.dataset.slug); if (!p) return;
     const t = (LANG === 'ru' && p.title_ru) || p.title; c.querySelector('h3').textContent = t; const sb = (LANG === 'ru' && p.sub_ru) || p.sub; c.querySelector('img').alt = t + (sb ? ', ' + sb : '');
     const q = c.querySelector('p'); q.textContent = sb ? sb + ' · ' : ''; const y = document.createElement('span'); y.className = 'y'; y.textContent = p.year; q.appendChild(y); });
+  if (typeof renderPres === 'function') renderPres();
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-l]'); if (!b) return; LANG = b.dataset.l; try { localStorage.setItem('lang', LANG); } catch (x) {} applyLang(); size(); });
 
@@ -1339,6 +1486,47 @@ if (location.hash && PROJECTS.some(p => '#' + p.slug === location.hash)) openPro
 })();
 </script>
 <script>
+// v8.1: interactive presentations. Each lives on its own site (demo.pravdukhin.com): here only a light preview.
+// Add a new one by adding a row; the site map (nav.js) reads this list too.
+const PRES = [
+  { url: 'https://demo.pravdukhin.com/private-event-164/', t: 'Private event · 164 guests', t_ru: 'Частное мероприятие · 164 гостя', thumb: "w/pres/ge_t.jpg", code: "w/pres/private-event-164" },
+  { url: 'https://demo.pravdukhin.com/private-event-63/', t: 'Private event · 63 guests', t_ru: 'Частное мероприятие · 63 гостя', thumb: "w/pres/ist_t.jpg", code: "w/pres/private-event-63" }
+];
+let PRI = 0;
+// layout: chosen pv2 + rva (16.11); the other options stay reachable for comparison: ?pv=1|3, ?rv=b|c, ?ph=0 (no phone)
+(() => { const q = new URLSearchParams(location.search), h = document.documentElement;
+  h.classList.add('pv' + (/^[123]$/.test(q.get('pv')) ? q.get('pv') : '2'), 'rv' + (/^[abc]$/.test(q.get('rv')) ? q.get('rv') : 'a'));
+  if (q.get('ph') === '0') h.classList.add('noph'); if (/^[23]$/.test(q.get('ph'))) h.classList.add('ph' + q.get('ph'));
+  if (!q.get('ph') && innerWidth > 760) h.classList.add('ph2'); })();
+let PVIS = false;
+function setV(v, base) { const src = base + (innerWidth <= 760 && v.dataset.m ? '_m' : '') + '.mp4'; v.poster = base + '.jpg';
+  if (v.dataset.src !== src) { v.dataset.src = src; if (v.getAttribute('src')) v.src = src; } }
+// play only the videos that are shown, and only while the section is near the screen
+function syncPres() {
+  const s = document.getElementById('presentation'); if (!s) return;
+  s.querySelectorAll('video').forEach(v => {
+    const shown = v.offsetParent !== null && v.dataset.src;
+    if (PVIS && shown) { if (v.getAttribute('src') !== v.dataset.src) v.src = v.dataset.src; v.play().catch(() => {}); } else v.pause();
+  });
+}
+function renderPres() {
+  const s = document.getElementById('presentation'); if (!s) return;
+  const ru = LANG === 'ru', p = PRES[PRI], lg = ru ? 'ru' : 'en';
+  s.querySelector('.prt').innerHTML = PRES.map((q, i) => `<button type="button" role="tab" aria-selected="${i === PRI}" data-pr="${i}"><img src="${q.thumb}" alt="" loading="lazy"><span>${(ru && q.t_ru) || q.t}</span></button>`).join('');
+  s.querySelector('#prGo').href = p.url + '?lang=' + LANG;
+  const dv = s.querySelector('.dv'), pv = s.querySelector('.ph video');
+  dv.dataset.m = '1';
+  setV(dv, p.code + '_desktop_' + lg); setV(pv, p.code + '_phone_' + lg);
+  syncPres();
+}
+(() => {
+  const s = document.getElementById('presentation'); if (!s) return;
+  s.querySelector('.prt').addEventListener('click', e => { const b = e.target.closest('[data-pr]'); if (!b || +b.dataset.pr === PRI) return; PRI = +b.dataset.pr; renderPres(); });
+  renderPres();
+  new IntersectionObserver(es => es.forEach(en => { PVIS = en.isIntersecting; syncPres(); }), { rootMargin: '200px 0px' }).observe(s.querySelector('.stg'));
+})();
+</script>
+<script>
 // portfolio: open the rest in place; closing goes back to the top of the section
 (() => {
   const g = document.getElementById('wgrid'), w = document.getElementById('wmore'), b = w.querySelector('button');
@@ -1352,6 +1540,6 @@ if (location.hash && PROJECTS.some(p => '#' + p.slug === location.hash)) openPro
   document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-l]')) setTimeout(label, 0); });
 })();
 </script>
-<script src="/nav.js?v=17" data-v="D" data-page="main" data-main="/" data-scan="/3d-venue-scanning/"></script>
+<script src="/nav.js?v=21" data-v="D" data-page="main" data-main="/" data-scan="/3d-venue-scanning/"></script>
 </body>
 </html>

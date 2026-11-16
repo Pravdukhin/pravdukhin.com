@@ -7,9 +7,9 @@ const S = document.currentScript, V = S.dataset.v, PAGE = S.dataset.page, V6 = (
 document.documentElement.classList.add('v6', 'v6' + V6); // 'main' | 'scan'
 const MAIN = S.dataset.main || '/nav/' + V.toLowerCase() + '.html', SCAN = S.dataset.scan || '/nav/' + V.toLowerCase() + '-scan.html';
 const TXT = {
-  en: { items: ['Start', 'Digital copy', '3D model', 'Render', 'Show day', 'Portfolio', 'About', 'Work stages and pricing', 'Scanning', 'Contact'],
+  en: { items: ['Start', 'Digital copy', '3D model', 'Render', 'Show day', 'Portfolio', 'About', 'Work stages and pricing', 'Scanning', 'Contact', 'Interactive presentation'],
         name: 'Yuriy Pravdukhin', kick: 'One project, 60 days', cta: 'Discuss your project', page: 'Scanning in detail', allp: 'All projects', all: 'All sections', menu: 'Contents', close: 'Close' },
-  ru: { items: ['Начало', 'Цифровая копия', '3D-модель', 'Рендер', 'Мероприятие', 'Портфолио', 'Обо мне', 'Этапы работы и стоимость', 'Сканирование', 'Контакты'],
+  ru: { items: ['Начало', 'Цифровая копия', '3D-модель', 'Рендер', 'Мероприятие', 'Портфолио', 'Обо мне', 'Этапы работы и стоимость', 'Сканирование', 'Контакты', 'Интерактивная презентация'],
         name: 'Юрий Правдухин', kick: 'Один проект, 60 дней', cta: 'Обсудить проект', page: 'Подробно о сканировании', allp: 'Все проекты', all: 'Все разделы', menu: 'Содержание', close: 'Закрыть' }
 };
 const DAYS = ['−60', '−45', '−30', '−20', '0'];
@@ -17,14 +17,95 @@ const DAYS = ['−60', '−45', '−30', '−20', '0'];
 const PROJ_COPY = [["tuscany-2026", "Private event in Italy", 2026, "Частное мероприятие в Италии"], ["istanbul-2026", "Private event in Istanbul", 2026, "Частное мероприятие в Стамбуле"], ["kuala-lumpur-2026", "Conference in Kuala Lumpur", 2026, "Конференция в Куала-Лумпуре"], ["dubai-2025", "Sports event in Dubai", 2025, "Спортивное мероприятие в Дубае"], ["belgrade-2024", "Conference in Belgrade", 2024, "Конференция в Белграде"], ["dubai-2024", "Private event in Dubai", 2024, "Частное мероприятие в Дубае"], ["amway-shanghai-2025", "Conference in Shanghai", 2025, "Конференция в Шанхае"], ["istanbul-cistern-2024", "Conference in Istanbul", 2024, "Конференция в Стамбуле"], ["amway-abu-dhabi-2024", "Conference in Abu Dhabi", 2024, "Конференция в Абу-Даби"], ["emirates-palace-2024", "Gala dinner in Abu Dhabi", 2024, "Гала-ужин в Абу-Даби"], ["villette-2024", "Private event near Paris", 2024, "Частное мероприятие под Парижем"], ["challain-2023", "Private event in the Loire Valley", 2023, "Частное мероприятие в долине Луары"], ["amway-thailand-2023", "Conference in Thailand", 2023, "Конференция в Таиланде"], ["tiktok-cyprus-2022", "Corporate event in Limassol", 2022, "Корпоративное мероприятие в Лимасоле"]];
 const projs = () => (typeof PROJECTS !== 'undefined' ? PROJECTS.map(p => [p.slug, (lang() === 'ru' && p.title_ru) || p.title, p.year])
   : PROJ_COPY.map(p => [p[0], (lang() === 'ru' && p[3]) || p[1], p[2]]));
+// v8.1: interactive presentations: the landing's PRES when present, else this copy (update it when presentations change)
+const PRES_COPY = [['https://demo.pravdukhin.com/private-event-164/', 'Private event · 164 guests', 'Частное мероприятие · 164 гостя'], ['https://demo.pravdukhin.com/private-event-63/', 'Private event · 63 guests', 'Частное мероприятие · 63 гостя']];
+const pres = () => (typeof PRES !== 'undefined' ? PRES.map(p => [p.url, (lang() === 'ru' && p.t_ru) || p.t]) : PRES_COPY.map(p => [p[0], (lang() === 'ru' && p[2]) || p[1]]));
 const dlg = document.getElementById('dlg');
 const dlgOpen = () => !!(dlg && dlg.open);
 const dlgSlug = () => (dlgOpen() && location.hash.length > 1 ? location.hash.slice(1) : '');
-const SEC = ['work', 'about', 'how', 'scanning', 'contact'];
-const SEC_ORDER = [6, 5, 7, 8, 9];   // as on the page: About, Portfolio, Stages and pricing, Scanning, Contact // 8 = scanning section on the landing (the page itself is a sub-row in the sheet)
+const SEC = ['work', 'about', 'how', 'scanning', 'contact', 'presentation'];
+const SEC_ORDER = [6, 5, 7, 8, 10, 9];   // as on the page: About, Portfolio, Stages and pricing, Scanning, Contact // 8 = scanning section on the landing (the page itself is a sub-row in the sheet)
 const lang = () => (document.documentElement.lang === 'ru' ? 'ru' : 'en');
 const X = () => TXT[lang()];
 const $ = (h) => { const d = document.createElement('div'); d.innerHTML = h.trim(); return d.firstChild; };
+
+// ---------- v8.1: mode "pres" for the presentations on demo.pravdukhin.com ----------
+// Only the ≡ button and the site map. The page keeps its logo, its own language switch and its popup.
+// The button goes into [data-site-nav] if the page has one, else it is fixed top right.
+if (PAGE === 'pres') {
+  const MAINP = S.dataset.main || 'https://pravdukhin.com/', SCANP = S.dataset.scan || MAINP + '3d-venue-scanning/';
+  const WA = { en: 'Hello Yuriy, I’d like to discuss a project. Please send me the 8 questions for a preliminary budget.',
+               ru: 'Здравствуйте, Юрий! Хочу обсудить проект. Пришлите, пожалуйста, 8 вопросов для предварительного бюджета.' };
+  const q = u => { const [b, h] = u.split('#'); return b + (b.includes('?') ? '&' : '?') + 'lang=' + lang() + (h ? '#' + h : ''); };
+  const here = location.pathname.replace(/index\.html$/, '');
+  const st = document.createElement('style');
+  st.textContent = `
+.pvn-burg,.pvn-sh{--pv-ink:#e8ecf1;--pv-dim:#8d9aae;--pv-line:#22324a;--pv-amber:#f2a648;--pv-bg:#081424;font-family:Geist,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+.pvn-burg{appearance:none;width:46px;height:46px;border-radius:50%;border:0;background:rgba(8,20,36,.45);color:var(--pv-ink);cursor:pointer;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0;-webkit-tap-highlight-color:transparent;transition:background .2s;flex:none}
+.pvn-burg:hover{background:rgba(242,166,72,.16)}
+.pvn-burg i{display:block;width:22px;height:2px;border-radius:1px;background:currentColor}
+.pvn-burg.pvn-fx{position:fixed;z-index:70;top:calc(12px + env(safe-area-inset-top,0px));right:12px}
+.pvn-sh{position:fixed;inset:0;z-index:2147483000;display:flex;justify-content:flex-end;visibility:hidden;transition:visibility 0s .35s}
+.pvn-sh.open{visibility:visible;transition:none}
+.pvn-sh .bg{position:absolute;inset:0;background:rgba(4,10,20,.55);opacity:0;transition:opacity .35s}
+.pvn-sh.open .bg{opacity:1}
+.pvn-sh .pn{position:relative;box-sizing:border-box;width:min(100%,420px);height:100%;overflow:auto;background:var(--pv-bg);border-left:1px solid var(--pv-line);color:var(--pv-ink);
+  padding:calc(22px + env(safe-area-inset-top,0px)) 28px calc(28px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;
+  transform:translateX(24px);opacity:0;transition:transform .35s cubic-bezier(.2,.7,.2,1),opacity .35s;text-align:left}
+.pvn-sh.open .pn{transform:none;opacity:1}
+@media (max-width:560px){.pvn-sh .pn{width:100%;border-left:0}}
+.pvn-sh .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px}
+.pvn-sh .me{font-weight:400;font-size:15px;color:var(--pv-ink);text-decoration:none}
+.pvn-sh .x{appearance:none;width:38px;height:38px;border-radius:50%;border:1px solid var(--pv-line);background:none;color:var(--pv-ink);font-size:20px;line-height:1;cursor:pointer;padding:0}
+.pvn-sh .k{color:var(--pv-amber);font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin:0 0 14px;font-weight:400}
+.pvn-sh ol{list-style:none;margin:0;padding:0;position:relative}
+.pvn-sh ol::before{content:"";position:absolute;left:44px;top:6px;bottom:6px;width:1px;background:rgba(232,236,241,.3)}
+.pvn-sh li{margin:0;padding:0}
+.pvn-sh li a{position:relative;display:flex;align-items:baseline;padding:9px 0;text-decoration:none;color:#c3ccd7;font-size:21px;font-weight:300;letter-spacing:-.005em;line-height:1.25}
+.pvn-sh li a:hover{color:var(--pv-ink)}
+.pvn-sh li a .d{width:36px;flex:none;text-align:right;font-size:12px;line-height:1;align-self:center;position:relative;top:1px;color:var(--pv-dim);font-variant-numeric:tabular-nums}
+.pvn-sh li a .t{padding-left:28px}
+.pvn-sh li a::before{content:"";position:absolute;left:40px;top:50%;width:9px;height:1px;background:rgba(232,236,241,.6)}
+.pvn-sh li.on > a{color:var(--pv-ink)}
+.pvn-sh li.on > a::after{content:"";position:absolute;left:40.5px;top:50%;width:8px;height:8px;margin-top:-4px;border-radius:50%;background:var(--pv-amber);box-shadow:0 0 0 3px rgba(8,20,36,.6),0 0 14px rgba(242,166,72,.55)}
+.pvn-sh .sp{height:20px}
+.pvn-sh li.sub a{font-size:16px;padding:2px 0 10px;color:var(--pv-dim)}
+.pvn-sh li.sub a::before{display:none}
+.pvn-sh li.sub a .t{padding-left:44px;position:relative}
+.pvn-sh li.sub a .t::before{content:"";position:absolute;left:28px;top:-6px;width:8px;height:12px;border-left:1px solid rgba(232,236,241,.35);border-bottom:1px solid rgba(232,236,241,.35)}
+.pvn-sh li.sub a i{font-style:normal;color:var(--pv-amber);margin-left:6px}
+.pvn-sh li.sub.on a{color:var(--pv-ink)}
+.pvn-sh li.sub.on a i{display:none}
+.pvn-sh li.sub a:hover{color:var(--pv-ink)}
+.pvn-sh .ft{margin-top:auto;padding-top:26px}
+.pvn-sh .cta{display:inline-block;padding:11px 18px;border:1px solid var(--pv-amber);border-radius:999px;color:var(--pv-ink);text-decoration:none;font-size:15px;background:rgba(8,20,36,.35)}
+.pvn-sh .cta:hover{background:var(--pv-amber);color:var(--pv-bg)}`;
+  document.head.appendChild(st);
+  const B = `<i></i><i></i><i></i>`;
+  const burg = $(`<button type="button" class="pvn-burg" aria-haspopup="dialog"></button>`); burg.innerHTML = B;
+  const slot = document.querySelector('[data-site-nav]');
+  if (slot) slot.appendChild(burg); else { burg.classList.add('pvn-fx'); document.body.appendChild(burg); }
+  const sh = $(`<div class="pvn-sh" role="dialog" aria-modal="true"><div class="bg"></div><div class="pn"></div></div>`);
+  document.body.appendChild(sh);
+  const SUBS = { 8: () => `<li class="sub"><a href="${q(SCANP)}"><span class="d"></span><span class="t">${X().page}<i>↗</i></span></a></li>`,
+    10: () => PRES_COPY.map(c => [c[0], (lang() === 'ru' && c[2]) || c[1]]).map(p => { const on = new URL(p[0]).pathname === here; return `<li class="sub${on ? ' on' : ''}"><a href="${q(p[0])}"${on ? ' aria-current="page"' : ''}><span class="d"></span><span class="t">${p[1]}<i>↗</i></span></a></li>`; }).join('') };
+  const href = i => q(MAINP + '#' + (i < 5 ? 's' + i : SEC[i - 5]));
+  const row = i => `<li class="${i === 10 ? 'on' : ''}"><a href="${href(i)}"><span class="d">${i > 0 && i < 5 ? DAYS[i] : ''}</span><span class="t">${X().items[i]}</span></a></li>` + (SUBS[i] ? SUBS[i]() : '');
+  const render = () => {
+    sh.querySelector('.pn').innerHTML = `<div class="hd"><a class="me" href="${q(MAINP)}">${X().name}</a><button type="button" class="x" aria-label="${X().close}">×</button></div>
+      <p class="k">${X().kick}</p><ol>${[0, 1, 2, 3, 4].map(row).join('')}</ol><div class="sp"></div><ol>${SEC_ORDER.map(row).join('')}</ol>
+      <div class="ft"><a class="cta" href="https://wa.me/393498929736?text=${encodeURIComponent(WA[lang()])}" target="_blank" rel="noopener">${X().cta}</a></div>`;
+    burg.setAttribute('aria-label', X().menu);
+  };
+  const open = () => { render(); sh.classList.add('open'); document.documentElement.style.overflow = 'hidden'; };
+  const close = () => { if (!sh.classList.contains('open')) return; sh.classList.remove('open'); document.documentElement.style.overflow = ''; };
+  burg.addEventListener('click', open);
+  sh.addEventListener('click', e => { if (e.target.closest('.bg') || e.target.closest('.x')) close(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  document.addEventListener('sitelang', () => { if (sh.classList.contains('open')) render(); else burg.setAttribute('aria-label', X().menu); });
+  render();
+  return;
+}
 
 const css = document.createElement('style');
 css.textContent = `
@@ -342,7 +423,8 @@ function renderSheet() {
   const a = current(), it = items();
   const row = i => `<li class="${(PAGE === 'scan' && i === 8) || (i === 5 && dlgSlug()) ? 'p sec' : cls(i, a)}"><a href="#" data-go="${i}"><span class="d">${i > 0 && i < 5 ? DAYS[i] : ''}</span><span class="t">${it[i]}</span></a></li>`
     + (i === 8 ? `<li class="sub${PAGE === 'scan' ? ' on' : ''}"><a href="${SCAN}"><span class="d"></span><span class="t">${X().page}<i>↗</i></span></a></li>` : '')
-    + (i === 5 ? pjRows(a) : '');
+    + (i === 5 ? pjRows(a) : '')
+    + (i === 10 ? pres().map(p => `<li class="sub"><a href="${p[0]}?lang=${lang()}"><span class="d"></span><span class="t">${p[1]}<i>↗</i></span></a></li>`).join('') : '');
   sheet.querySelector('.pn').innerHTML = `<div class="hd"><a class="me" href="${PAGE === 'scan' ? MAIN : '#top'}">${X().name}</a><button type="button" class="x" aria-label="${X().close}">×</button></div>
     <p class="k">${X().kick}</p><ol>${[0, 1, 2, 3, 4].map(row).join('')}</ol><div class="sp"></div><ol>${SEC_ORDER.map(row).join('')}</ol>
     <div class="ft"><a class="btn wa" href="https://wa.me/393498929736" target="_blank" rel="noopener">${X().cta}</a></div>`;
@@ -503,7 +585,7 @@ if (PAGE === 'main' && location.hash) {
 
 // ---------- language switch, variant A (v7.1, 28.10) ----------
 (() => {
-const LS = [['en', 'EN', 'English'], ['ru', 'RU', 'Русский']];  // v8.0 on pravdukhin.com: IT/FR/ES/TR come back with translations in v8.1
+const LS = [['en', 'EN', 'English'], ['ru', 'RU', 'Русский']];  // v8.1: EN/RU only; IT/FR/ES/TR later
 const base = c => (c === 'ru' ? 'ru' : 'en');
 const sel = () => { let v = ''; try { v = localStorage.getItem('langSel') || ''; } catch (e) {} return LS.some(x => x[0] === v) && base(v) === lang() ? v : lang(); };
 const st = document.createElement('style');
