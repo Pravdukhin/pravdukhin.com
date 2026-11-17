@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <link rel="canonical" href="https://pravdukhin.com/">
+<script>/* v8.1.9: landing by a link to a section: hidden until it stands there (nav.js shows it) */
+(function () { if (/^#(how|interactive|presentation|work|about|scanning|contact)$/.test(location.hash)) { var d = document.documentElement; d.className += ' landing'; window.__landing = true;
+  setTimeout(function () { d.classList.remove('landing'); }, 2500); setTimeout(function () { window.__landing = false; }, 3500); } })();</script>
+<style>html.landing{background:#081424}html.landing body{visibility:hidden}</style>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Yuriy Pravdukhin · Technical design and production for events</title>
 <meta name="description" content="Technical director for events. Laser scan of the venue, 3D model, renders, delivery on site. Milan / Dubai, worldwide.">
@@ -374,7 +378,7 @@ dialog::backdrop{background:rgba(0,0,0,.6)}
 .ph2 .stg.nophone,.ph3 .stg.nophone{display:block;max-width:1000px}
 @media (max-width:760px){ .ph2 .stg .ph{width:24%;border-radius:12px;border-width:3px} .ph3 .stg .ph{width:28%;border-radius:10px;border-width:3px} }
 .prs{display:flex;justify-content:space-between;align-items:flex-end;gap:20px 32px;flex-wrap:wrap;margin-top:clamp(22px,3vw,34px)}
-.prt{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;padding:2px}
+.prt{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;padding:5px;margin:-3px}
 .prt button{appearance:none;font:inherit;background:none;border:0;padding:0;cursor:pointer;color:var(--dim);text-align:left;width:150px;flex:0 0 auto}
 .prt img{display:block;width:150px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;opacity:.55;outline:1px solid var(--line);outline-offset:0;transition:opacity .2s,outline-color .2s}
 .prt span{display:block;font-size:12px;line-height:1.35;margin-top:7px;transition:color .2s}
@@ -401,7 +405,7 @@ dialog::backdrop{background:rgba(0,0,0,.6)}
   .stg .ph{width:24%;right:0;bottom:-8%;border-radius:16px;border-width:4px}
   .prs{flex-direction:column;align-items:stretch;margin-top:30px}
   .prs .go{align-items:flex-start}
-  .prt{margin:0 calc(-1 * var(--pad));padding:2px var(--pad)}
+  .prt{margin:-3px calc(-1 * var(--pad));padding:5px var(--pad)}
   .prt button,.prt img{width:138px}
 }
 /* Delivery options: rva two frames, rvb brackets, rvc filled + framed */
@@ -777,7 +781,7 @@ dialog::backdrop{background:rgba(0,0,0,.6)}
 </main>
 
 <footer>
-  <span data-i="foot1">Yuriy Pravdukhin · Technical design and production for events</span>
+  <span data-i="foot1">Iurii Pravdukhin · Technical design and production for events</span>
   <span><span data-i="foot2">Milan, Italy · Dubai, UAE</span> · P.IVA 12554630967</span>
 </footer>
 
@@ -814,7 +818,7 @@ const T = {
   s4h: 'Delivered as designed', s4p: 'Delivery follows the approved design to the letter. At this stage I prepare a detailed technical brief and work schedule for the suppliers, which are also agreed with the venue and other services. This keeps surprises on site to a minimum and the risks under control.',
   aH: 'About', a1: 'Hi! I’m Yuriy, and I’ve been in technical event production for over 20 years, in recent years more and more often around the world. That usually means 60 flights a year, and yes, I love planes too.', a2: 'I also love bringing structure to chaos and building a system in everything I take on.', a3: 'As a technical director, I specialise in conferences and high-end private events. As my portfolio shows, galas and stadium projects come my way too.', a4: 'In summer I live near Milan, in winter I’m often in Dubai. I work on projects in SketchUp and Vectorworks, and we use visualisation tools built on Unreal Engine. For each project I bring together a trusted team of specialists, and I’m personally accountable for the result.', a5: 'I work in English and Russian.', f1: 'years in event production', f2: 'projects', f3: 'countries',
   gH: 'Where', gP: 'Based in Milan and Dubai. Delivered projects in 19 countries.', geoH: 'Experience and trusted technical partners in:',
-  mail: 'Email', close: 'Close', foot1: 'Yuriy Pravdukhin · Technical design and production for events', foot2: 'Milan, Italy · Dubai, UAE',
+  mail: 'Email', close: 'Close', foot1: 'Iurii Pravdukhin · Technical design and production for events', foot2: 'Milan, Italy · Dubai, UAE',
   countries: ['Italy','France','Spain','Greece','Cyprus','Malta','Montenegro','Croatia','Turkey','Georgia','Serbia','Bulgaria','UAE','Maldives','Kazakhstan','China','Singapore','Thailand','Malaysia'],
   caps: [
    ['Day −45', 'A digital copy of the venue', 'We inspect the venue and walk it with a handheld SLAM scanner. In a few hours we have a point cloud, an accurate 3D copy of the venue: every wall, tree and step. Our own equipment in Italy and the UAE.'],
@@ -1356,7 +1360,7 @@ addEventListener('resize', () => {
   }, 120);
 });
 addEventListener('scroll', () => {
-  if (AUTO.run) return;
+  if (AUTO.run || window.__landing) return;   // v8.1.9: not while landing on a section by link
   if (atTop()) { AUTO.armed = true; AUTO.idx = -1; return; }
   if (!AUTO.armed || performance.now() - resizedAt < 400 || performance.now() - wLast < 300) return;
   const here = AUTO.idx >= 0 ? yOf(STOPS()[AUTO.idx]) : ringTop(), tol = Math.max(120, innerHeight / 3);
@@ -1513,7 +1517,8 @@ let PRI = 0;
   if (q.get('ph') === '0') h.classList.add('noph'); if (/^[23]$/.test(q.get('ph'))) h.classList.add('ph' + q.get('ph'));
   if (!q.get('ph') && innerWidth > 760) h.classList.add('ph2'); })();
 let PVIS = false;
-function setV(v, base) { const src = base + (innerWidth <= 760 && v.dataset.m ? '_m' : '') + '.mp4'; v.poster = base + '.jpg';
+const PRV = '?v=2';   // v8.1.8: recordings of 17.11
+function setV(v, base) { const src = base + (innerWidth <= 760 && v.dataset.m ? '_m' : '') + '.mp4' + PRV; v.poster = base + '.jpg' + PRV;
   if (v.dataset.src !== src) { v.dataset.src = src; if (v.getAttribute('src')) v.src = src; } }
 // play only the videos that are shown, and only while the section is near the screen
 function syncPres() {
@@ -1554,6 +1559,6 @@ function renderPres() {
   document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-l]')) setTimeout(label, 0); });
 })();
 </script>
-<script src="/nav.js?v=27" data-v="D" data-page="main" data-main="/" data-scan="/3d-venue-scanning/"></script>
+<script src="/nav.js?v=29" data-v="D" data-page="main" data-main="/" data-scan="/3d-venue-scanning/"></script>
 </body>
 </html>

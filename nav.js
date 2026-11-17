@@ -374,6 +374,7 @@ function returnTo(j) {
 // one arrow per page, moved into the section the visitor landed on
 const retA = $(`<button type="button" class="retA" hidden><span>↑</span><small></small></button>`);
 retA.addEventListener('click', () => {
+  userMoved = true;   // v8.1.10: stops the landing re-align
   const r = getRet(); setRet(null); syncRet();
   if (!r) return;
   if (PAGE === 'scan') { if (r.sec && r.sel) { try { sessionStorage.setItem(LAND_KEY, JSON.stringify({ sec: r.sec, sel: r.sel })); } catch (e) {} }
@@ -398,8 +399,8 @@ function syncRet() {
     const host = retHost(r.t);
     if (host && retA.parentNode !== host) { if (retA.parentNode && retA.parentNode.classList) retA.parentNode.classList.remove('hasRetA'); host.prepend(retA); host.classList.add('hasRetA'); }
     const L = lang() === 'ru';
-    retA.querySelector('small').textContent = L ? 'Вернуться' : 'Back up';
-    retA.setAttribute('aria-label', L ? 'Вернуться туда, откуда пришли' : 'Back up to where you were');
+    retA.querySelector('small').textContent = r.top ? (L ? 'В начало' : 'To the top') : (L ? 'Вернуться' : 'Back up');
+    retA.setAttribute('aria-label', r.top ? (L ? 'В начало сайта' : 'To the start of the site') : (L ? 'Вернуться туда, откуда пришли' : 'Back up to where you were'));
   }
   if (retA.hidden === show) retA.hidden = !show;
 }
@@ -606,16 +607,22 @@ if (PAGE === 'main' && location.hash) {
       // back from the scanning page to the button pressed in that section: the button near the bottom of the screen
       let land = null; try { land = JSON.parse(sessionStorage.getItem(LAND_KEY)); sessionStorage.removeItem(LAND_KEY); } catch (e) {}
       const b = land && land.sec === h && land.sel && document.querySelector('#' + h + ' ' + land.sel);
-      if (b) { toBtn(b); holdLanding(() => toBtn(b)); }
+      if (b) { toBtn(b); holdLanding(() => toBtn(b)); landF.f = () => toBtn(b); }
       else {
-        go(5 + SEC.indexOf(h));
-        holdLanding(() => { const e = document.getElementById(h); if (!e) return; const y = Math.round(e.getBoundingClientRect().top + scrollY - 56); if (Math.abs(scrollY - y) > 2) { if (typeof freeScroll === 'function') freeScroll(); scrollTo({ top: y, behavior: 'instant' }); } });
+        const toSec = () => { const e = document.getElementById(h); if (!e) return; const y = Math.round(e.getBoundingClientRect().top + scrollY - 56); if (Math.abs(scrollY - y) > 2) { if (typeof freeScroll === 'function') freeScroll(); scrollTo({ top: y, behavior: 'instant' }); } };
+        if (typeof freeScroll === 'function') freeScroll(); toSec(); holdLanding(toSec); landF.f = toSec;
+        setRet({ j: 0, t: h, top: 1 }); retSetAt = performance.now(); syncRet();   // v8.1.10: arrow to the start of the site
       }
     }
   };
-  // v8.1.7: do not wait for every picture: start at "load" or after 1.2 s, whichever comes first
-  let ran = false; const once = () => { if (!ran) { ran = true; run(); } };
-  if (document.readyState === 'complete') setTimeout(once, 300); else { addEventListener('load', () => setTimeout(once, 300)); setTimeout(once, 1200); }
+  // v8.1.9: right away (the page is parsed when nav.js runs), then show the page once it stands at the section
+  const landF = { f: null };
+  const show = () => { const d = document.documentElement; if (!d.classList.contains('landing')) return; if (landF.f) landF.f(); d.classList.remove('landing'); };
+  run();
+  if (document.documentElement.classList.contains('landing')) {
+    let done = false; const once = () => { if (!done) { done = true; requestAnimationFrame(() => requestAnimationFrame(show)); } };
+    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(once); setTimeout(once, 500);
+  }
 }
 
 // ---------- language switch, variant A (v7.1, 28.10) ----------
